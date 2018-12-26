@@ -2,8 +2,8 @@ extern crate futures;
 extern crate hyper;
 extern crate mime;
 extern crate serde_json;
-
 use self::futures::{future, Future, Stream};
+use self::serde_json::{Error, Value};
 use gotham::handler::IntoResponse;
 use gotham::handler::{HandlerFuture, IntoHandlerError};
 use gotham::helpers::http::header::X_REQUEST_ID;
@@ -33,7 +33,9 @@ pub fn hello_post(mut state: State) -> Box<HandlerFuture> {
         .then(|full_body| match full_body {
             Ok(valid_body) => {
                 let body_content = String::from_utf8(valid_body.to_vec()).unwrap();
+                let v: Value = serde_json::from_str(&body_content).unwrap();
                 println!("Body: {}", body_content);
+                println!("Please call {} at the number {}", v["name"], v["phones"][0]);
                 let res = create_empty_response(&state, StatusCode::OK);
                 future::ok((state, res))
             }
