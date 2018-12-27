@@ -12,21 +12,21 @@ extern crate serde_derive;
 use gotham::router::builder::*;
 use gotham::router::Router;
 
-use gotham::state::{State};
-mod handlers;
+mod get_handlers;
+mod path_handlers;
+mod post_handlers;
 mod prod_handlers;
-use self::handlers::*;
+use self::get_handlers::*;
+use self::path_handlers::*;
+use self::post_handlers::*;
 
-const HELLO_ROUTER: &'static str = "Hello Router!";
+fn router() -> Router {
+    build_simple_router(|route| {
+        route
+            .get("/products/:name")
+            .with_path_extractor::<PathExtractor>()
+            .to(path_handler);
 
-
-pub fn say_hello(state: State) -> (State, &'static str) {
-    (state, HELLO_ROUTER)
-}
-
-
-fn router()->Router{
-    build_simple_router(|route|{
         route.get("/").to(say_hello);
         route.get("/hello").to(hello_handler);
         route.post("/post").to(hello_post);
@@ -42,7 +42,7 @@ fn router()->Router{
 pub fn main() {
     let addr = "127.0.0.1:7878";
     println!("Listening for requests at http://{}", addr);
-    gotham::start(addr,router())
+    gotham::start(addr, router())
 }
 
 #[cfg(test)]

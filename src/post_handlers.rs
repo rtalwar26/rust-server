@@ -3,8 +3,7 @@ extern crate hyper;
 extern crate mime;
 extern crate serde_json;
 use self::futures::{future, Future, Stream};
-use self::serde_json::{Error, Value};
-use gotham::handler::IntoResponse;
+use self::serde_json::Value;
 use gotham::handler::{HandlerFuture, IntoHandlerError};
 use gotham::helpers::http::header::X_REQUEST_ID;
 use gotham::state::request_id;
@@ -20,10 +19,6 @@ fn print_request_elements(state: &State) {
     println!("URI: {:?}", uri);
     println!("HTTP Version: {:?}", http_version);
     println!("Headers: {:?}", headers);
-}
-
-pub fn hello_handler(s: State) -> (State, impl IntoResponse) {
-    (s, "hello_handler")
 }
 
 pub fn hello_post(mut state: State) -> Box<HandlerFuture> {
